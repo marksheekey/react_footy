@@ -29,6 +29,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
+    "react-native-action-button": "^2.8.5",
     "react-native-dialog": "^6.1.2",
     "react-native-dialog-input": "^1.0.8",
     "react-native-floating-action": "^1.21.0",
