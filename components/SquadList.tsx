@@ -28,13 +28,13 @@ class SquadList extends React.Component {
         return (
             <View style = {styles.container}>
                 <FloatingAction onPressMain= { () => {
-                    <DialogInput
+                    <Dialog.Container
                                  title={"DialogInput 1"}
                                  message={"Message for DialogInput #1"}
                                  hintInput ={"HINT INPUT"}
                                  submitInput={ (inputText) => {this.sendInput(inputText)} }
                                  closeDialog={ () => {this.showDialog(false)}}>
-                    </DialogInput>
+                    </Dialog.Container>
                 }}/>
                 <FlatList data={this.state.players} renderItem={({ item }) => (
                     <Player
