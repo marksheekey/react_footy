@@ -11,9 +11,9 @@ import {
 
 const SquadScreen = () => {
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <SquadList />
-    </SafeAreaView>
-);
+        <SafeAreaView style={{flex: 1}}>
+            <SquadList/>
+        </SafeAreaView>
+    );
 };
 export default SquadScreen;
