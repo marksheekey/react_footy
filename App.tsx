@@ -7,11 +7,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Colors from './constants/Colors'
 
-import MatchScreen from './screens/Match';
-import SquadScreen from './screens/Squad';
+import MatchScreen from './screens/MatchScreen';
+import SquadScreen from './screens/SquadScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+export enum MatchStatus { Stopped, Playing, Paused}
 
 function MatchStack() {
   return (

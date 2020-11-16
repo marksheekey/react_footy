@@ -6,37 +6,54 @@ import {openDatabase} from "expo-sqlite";
 import {StoppedGame} from "./StoppedGame";
 import Dialog from "react-native-dialog";
 import {PlayingGame} from "./PlayingGame";
+import {MatchStatus} from "../App";
 
-const db = openDatabase('Players.db');
+export const Match: React.FunctionComponent<{ players: Player[], status: MatchStatus }> = ({ players, status }) => (
+                <View style={styles.container}>
+                   <MatchButton  status={status}>
+                   </MatchButton>
+                    <PlayingGame players={players}>
+                    </PlayingGame>
+                </View>
+)
 
-enum MatchStatus { Stopped, Playing, Paused}
-
-export class Match extends React.Component {
-    state = {
-        status: MatchStatus.Stopped
-    };
-
+type MatchProps = {
+    status: MatchStatus,
+    players: Player[]
+}
+class MatchScreen extends Component<MatchProps> {
     render() {
-        if(this.state.status == MatchStatus.Stopped) {
+        if(this.props.status == MatchStatus.Stopped){
             return (
-                <View style={styles.container}>
-                    <Button
-                        title="Start Game"
-                        onPress={() => {this.setState({status: MatchStatus.Playing})}}/>
-                    <StoppedGame></StoppedGame>
-                </View>
-            );
+                <StoppedGame
+                     players={this.props.players}/>
+            )
         }
-        if(this.state.status == MatchStatus.Playing) {
+        if(this.props.status == MatchStatus.Playing){
             return (
-                <View style={styles.container}>
-                    <Button
-                        title="Pause Game"
-                        onPress={() => {this.setState({status: MatchStatus.Stopped})}}/>
-                    <PlayingGame></PlayingGame>
-                </View>
-            );
+                <PlayingGame
+                    players={this.props.players}/>
+            )
         }
     }
 }
 
+class MatchButton extends Component<{ status: MatchStatus }> {
+    render() {
+        let {status} = this.props;
+        if(status == MatchStatus.Stopped){
+            return (
+                <Button
+                    title="Start Game"
+                    onPress={() => {}}/>
+            )
+        }
+        if(status == MatchStatus.Playing){
+            return (
+                <Button
+                    title="Pause Game"
+                    onPress={() => {}}/>
+            )
+        }
+    }
+}
