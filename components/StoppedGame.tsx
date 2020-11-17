@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Text, View, FlatList, Button, TouchableWithoutFeedback, TouchableOpacity} from "react-native";
 import styles from "../styles/styles";
-import {Player} from "../classes/Player";
+import {Player} from "../classes/Classes";
 import {PlayerView} from "./PlayerView";
 
 export const StoppedGame: React.FunctionComponent<{ players: Player[] }> = ({ players }) => (

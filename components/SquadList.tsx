@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Text, View, FlatList, Button} from "react-native";
 import styles from "../styles/styles";
 import Dialog from 'react-native-dialog';
-import {Player} from "../classes/Player";
+import {Player} from "../classes/Classes";
 import {openDatabase} from "expo-sqlite";
 const db = openDatabase('Players.db');
 

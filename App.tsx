@@ -6,13 +6,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Colors from './constants/Colors'
-
 import MatchScreen from './screens/MatchScreen';
 import SquadScreen from './screens/SquadScreen';
+import {openDatabase} from "expo-sqlite";
+import {MatchProps, MatchStatus, Player} from "./classes/Classes";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-export enum MatchStatus { Stopped, Playing, Paused}
 
 function MatchStack() {
   return (
@@ -91,5 +91,6 @@ function App() {
       </NavigationContainer>
   );
 }
+
 
 export default App;
