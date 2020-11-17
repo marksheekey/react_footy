@@ -1,13 +1,6 @@
-import {
-    Animated,
-    AppState, AppStateStatus,
-    AsyncStorage,
-    Button,
-    Text,
-    View
-} from "react-native";
+import {Button, Text, View} from "react-native";
 import * as React from "react";
-import {Component, useEffect, useRef, useState} from "react";
+import {Component} from "react";
 import {StoppedGame} from "../components/StoppedGame";
 import {PlayingGame} from "../components/PlayingGame";
 import styles from "../styles/styles";
@@ -15,7 +8,6 @@ import {openDatabase} from "expo-sqlite";
 import {createTable} from "../components/SquadList";
 import {PreMatch} from "../components/PreMatch";
 import {MatchStatus, Player} from "../classes/Classes";
-import {differenceInSeconds} from "date-fns";
 
 const db = openDatabase('Players.db');
 const timer = require('react-native-timer');
@@ -38,9 +30,9 @@ export default class MatchScreen extends Component {
             this.setState({
                 elapsedTime: updatedTime
             })
-            this.state.players.filter(player => player.playing && player.inMatch).forEach((item ) => {
+            this.state.players.filter(player => player.playing && player.inMatch).forEach((item) => {
                 var upd = item
-                item.timePlayed = item.timePlayed +1
+                item.timePlayed = item.timePlayed + 1
                 this.updatePlayer(item)
             })
         }
@@ -48,8 +40,6 @@ export default class MatchScreen extends Component {
 
     componentDidMount() {
         createTable()
-        this.getPlayersFromDb()
-        timer.clearTimeout(this)
     }
 
     subPlayer = (player: Player) => {
@@ -114,6 +104,8 @@ export default class MatchScreen extends Component {
 
     render() {
         if (this.state.loading) {
+            this.getPlayersFromDb()
+            timer.clearTimeout(this)
             return (
                 <View style={styles.container}>
                     <Text>Loading</Text>
@@ -146,7 +138,7 @@ export default class MatchScreen extends Component {
                     <Button
                         title="Start Match"
                         onPress={() => {
-                            timer.setInterval(this,"match",this.doTiming, 1000)
+                            timer.setInterval(this, "match", this.doTiming, 1000)
                             this.setState({status: MatchStatus.Playing, clockRunning: true})
                         }}
                     />
@@ -162,7 +154,7 @@ export default class MatchScreen extends Component {
                     <Button
                         title="Select Team to start"
                         onPress={() => {
-                            this.setState({status: MatchStatus.PreMatch})
+                            this.setState({status: MatchStatus.PreMatch, loading: true})
                         }}
                     />
                 </View>
@@ -176,6 +168,7 @@ export default class MatchScreen extends Component {
                 'SELECT * FROM squad',
                 [],
                 (tx, results) => {
+                    const init = this.state.loading
                     var squad = [] as Player[]
                     for (let i = 0; i < results.rows.length; ++i) {
                         const item = results.rows.item(i)
@@ -183,13 +176,24 @@ export default class MatchScreen extends Component {
                         player.key = item.id
                         player.inMatch = item.in_match > 0
                         player.playing = item.playing > 0
-                        player.timePlayed = item.time_played
+                        if (init) {
+                            player.timePlayed = 0
+                        } else {
+                            player.timePlayed = item.time_played
+                        }
                         squad.push(player)
                     }
-                    this.setState({
-                        loading: false,
-                        players: squad
-                    })
+                    if (init) {
+                        this.setState({
+                            elapsedTime: 0,
+                            loading: false,
+                            players: squad
+                        })
+                    } else {
+                        this.setState({
+                            players: squad
+                        })
+                    }
                 }
             );
         });

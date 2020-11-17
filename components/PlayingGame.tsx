@@ -4,21 +4,17 @@ import {
     Text,
     View,
     FlatList,
-    Button,
-    TouchableWithoutFeedback,
     TouchableOpacity,
-    AsyncStorage,
-    AppState, AppStateStatus
 } from "react-native";
 import styles from "../styles/styles";
 import {Player} from "../classes/Classes";
-import {PlayerView} from "./PlayerView";
 
 export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer: ((player: Player) => void) }> = ({ players , subPlayer} ) => {
-
+    const playing = players.sort((b,a) => a.timePlayed - b.timePlayed)
+    const subs = players.sort((a,b) => a.timePlayed - b.timePlayed)
     return (<View style={styles.container}>
             <Text style={styles.title}>Playing</Text>
-            <FlatList data={players.filter(player => player.playing && player.inMatch)}
+            <FlatList data={playing.filter(player => player.playing && player.inMatch)}
                       renderItem={({item}) => (
                           <TouchableOpacity onPress={() => {
                               subPlayer(item)
@@ -37,7 +33,7 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
                 }}
             />
             <Text style={styles.title}>Substitutes</Text>
-            <FlatList data={players.filter(player => !player.playing && player.inMatch)}
+            <FlatList data={subs.filter(player => !player.playing && player.inMatch)}
                       renderItem={({item}) => (
                           <TouchableOpacity onPress={() => {
                               subPlayer(item)
