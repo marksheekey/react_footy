@@ -12,12 +12,13 @@ export const StoppedGame: React.FunctionComponent<{ players: Player[], updatePla
                       <TouchableOpacity onPress={() => {
                           var newDetails = item
                           item.inMatch = false
-                          updatePlayer(newDetails)}
+                          updatePlayer(newDetails)
+                      }
                       }>
                           <PlayerView
                               name={item.name}
                           />
-                      </TouchableOpacity>
+                       </TouchableOpacity>
                   )}/>
         <View
             style={{
