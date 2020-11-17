@@ -13,21 +13,75 @@ const db = openDatabase('Players.db');
 
 export default class MatchScreen extends Component {
     state = {
-        loading : true,
+        loading: true,
         status: MatchStatus.Stopped,
-        players: [] as Player[]
+        players: [] as Player[],
+        playerOff: "",
+        playerOn: ""
     }
 
-    componentDidMount () {
+    componentDidMount() {
         createTable()
         this.getPlayersFromDb()
     }
 
-     updatePlayer = (player: Player) => {
+    subPlayer = (player: Player) => {
+        var playerOnState = this.state.playerOn
+        var playerOffState = this.state.playerOff
+
+        console.log("sub player",player.name+" "+player.key)
+        console.log("state:"+this.state.playerOn, this.state.playerOff)
+
+        if(player.key == playerOnState || player.key == playerOffState){
+            this.setState({
+                playerOff: "",
+                playerOn: ""
+            })
+            console.log("return")
+            return
+        }
+
+        if(player.playing){
+            console.log("sub player coming off",player.name)
+            playerOffState = player.key
+            this.setState({
+                playerOff: player.key
+            })
+        }
+
+        if(!player.playing){
+            console.log("sub player coming on",player.name)
+            playerOnState = player.key
+            this.setState({
+                playerOn: player.key
+            })
+        }
+
+        if(playerOnState.length > 0 && playerOffState.length > 0){
+            console.log("substutution ready")
+            var playerOff  = this.state.players.find(list => list.key === playerOffState)
+            if(playerOff !== undefined){
+                playerOff.playing = false
+                var playerOn = this.state.players.find(list => list.key === playerOnState)
+                if(playerOn != undefined){
+                    playerOn.playing = true
+                    this.updatePlayer(playerOff)
+                    this.updatePlayer(playerOn)
+                    this.setState({
+                        playerOff: "",
+                        playerOn: ""
+                    })
+                }
+            }
+        }
+
+    }
+
+    updatePlayer = (player: Player) => {
         var playing = 0
         var inMatch = 0
-        if(player.playing) playing = 1
-        if(player.inMatch) inMatch = 1
+        if (player.playing) playing = 1
+        if (player.inMatch) inMatch = 1
         db.transaction((tx) => {
             tx.executeSql(
                 'UPDATE squad set in_match = ?, playing = ?, time_played = ? WHERE id = ?',
@@ -40,46 +94,55 @@ export default class MatchScreen extends Component {
     }
 
     render() {
-        if(this.state.loading){
+        if (this.state.loading) {
             return (
                 <View style={styles.container}>
-                    <Text >Loading</Text>
+                    <Text>Loading</Text>
                 </View>
             )
         }
-        if(this.state.status == MatchStatus.Playing){
+        if (this.state.status == MatchStatus.Playing) {
             return (
                 <View style={styles.container}>
+                    <Text style={styles.title}>Playing a match....</Text>
+                    <PlayingGame
+                        players={this.state.players} subPlayer={this.subPlayer}/>
                     <Button
                         title="Pause Game"
-                        onPress={() => {this.setState({status : MatchStatus.Stopped})}}
-                        />
-                <PlayingGame
-                    players={this.state.players}/>
+                        onPress={() => {
+                            this.setState({status: MatchStatus.Stopped})
+                        }}
+                    />
                 </View>
             )
         }
-        if(this.state.status == MatchStatus.PreMatch){
+        if (this.state.status == MatchStatus.PreMatch) {
             return (
                 <View style={styles.container}>
-                    <Button
-                        title="Start Match"
-                        onPress={() => {this.setState({status : MatchStatus.Playing})}}
-                    />
+                    <Text style={styles.title}>Select team to start....</Text>
                     <PreMatch
-                        players={this.state.players}/>
+                        players={this.state.players} updatePlayer={this.updatePlayer}/>
+                    <Button
+                        title="Team picked"
+                        onPress={() => {
+                            this.setState({status: MatchStatus.Playing})
+                        }}
+                    />
                 </View>
             )
         }
-        if(this.state.status == MatchStatus.Stopped) {
+        if (this.state.status == MatchStatus.Stopped) {
             return (
                 <View style={styles.container}>
-                    <Button
-                        title="Match day squad picked"
-                        onPress={() => {this.setState({status : MatchStatus.PreMatch})}}
-                    />
+                    <Text style={styles.title}>Select match day squad....</Text>
                     <StoppedGame
                         players={this.state.players} updatePlayer={this.updatePlayer}/>
+                    <Button
+                        title="Select Team to start"
+                        onPress={() => {
+                            this.setState({status: MatchStatus.PreMatch})
+                        }}
+                    />
                 </View>
             )
         }
@@ -104,9 +167,9 @@ export default class MatchScreen extends Component {
                         squad.push(player)
                     }
                     this.setState({
-                        status: MatchStatus.Stopped,
                         loading: false,
-                        players: squad})
+                        players: squad
+                    })
                 }
             );
         });
