@@ -1,6 +1,16 @@
-import {Button, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {
+    AppState, AppStateStatus,
+    AsyncStorage,
+    Button,
+    FlatList,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
 import * as React from "react";
-import {Component} from "react";
+import {Component, useEffect, useRef, useState} from "react";
 import {StoppedGame} from "../components/StoppedGame";
 import {PlayingGame} from "../components/PlayingGame";
 import styles from "../styles/styles";
@@ -8,8 +18,21 @@ import {openDatabase} from "expo-sqlite";
 import {createTable} from "../components/SquadList";
 import {PreMatch} from "../components/PreMatch";
 import {MatchStatus, Player} from "../classes/Classes";
+import {differenceInSeconds} from "date-fns";
 
 const db = openDatabase('Players.db');
+const appState = useRef(AppState.currentState);
+const [elapsed, setElapsed] = useState(0);
+
+const recordStartTime = async () => {
+    try {
+        const now = new Date();
+        await AsyncStorage.setItem("@start_time", now.toISOString());
+    } catch (err) {
+        // TODO: handle errors from setItem properly
+        console.warn(err);
+    }
+};
 
 export default class MatchScreen extends Component {
     state = {
@@ -17,12 +40,14 @@ export default class MatchScreen extends Component {
         status: MatchStatus.Stopped,
         players: [] as Player[],
         playerOff: "",
-        playerOn: ""
+        playerOn: "",
+        clockRunning: false
     }
 
     componentDidMount() {
         createTable()
         this.getPlayersFromDb()
+        AppState.addEventListener("change", this.handleAppStateChange);
     }
 
     subPlayer = (player: Player) => {
@@ -183,4 +208,30 @@ export default class MatchScreen extends Component {
             )
         });
     }
+
+    async handleAppStateChange(nextAppState: AppStateStatus) {
+        if (appState.current.match(/inactive|background/) &&
+            nextAppState === "active") {
+            let elapsed = await this.getElapsedTime();
+            if(elapsed != undefined){
+                console.log(elapsed)
+                setElapsed(elapsed);
+            }
+        }
+        appState.current = nextAppState;
+    }
+
+    getElapsedTime = async () => {
+        console.log("getTime")
+        try {
+            let startTime = await AsyncStorage.getItem("@start_time");
+            const now = new Date();
+            if(startTime != undefined){
+                return differenceInSeconds(now, Date.parse(startTime));
+            }
+        } catch (err) {
+            // TODO: handle errors from setItem properly
+            console.warn(err);
+        }
+    };
 }

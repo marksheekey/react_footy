@@ -1,5 +1,15 @@
-import React, {Component} from "react";
-import {Text, View, FlatList, Button, TouchableWithoutFeedback, TouchableOpacity} from "react-native";
+import React, {Component, useEffect, useRef, useState} from "react";
+import { differenceInSeconds } from 'date-fns'
+import {
+    Text,
+    View,
+    FlatList,
+    Button,
+    TouchableWithoutFeedback,
+    TouchableOpacity,
+    AsyncStorage,
+    AppState, AppStateStatus
+} from "react-native";
 import styles from "../styles/styles";
 import {Player} from "../classes/Classes";
 import {PlayerView} from "./PlayerView";
