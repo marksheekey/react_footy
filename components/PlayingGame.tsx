@@ -24,7 +24,8 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
                               subPlayer(item)
                           }
                           }>
-                              <PlayerView
+                              <PlayerPlayingView
+                                  time = {item.timePlayed}
                                   name={item.name}
                               />
                           </TouchableOpacity>
@@ -42,7 +43,8 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
                               subPlayer(item)
                           }
                           }>
-                              <PlayerView
+                              <PlayerPlayingView
+                                  time = {item.timePlayed}
                                   name={item.name}
                               />
                           </TouchableOpacity>
@@ -50,3 +52,5 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
         </View>
     )
 }
+
+const PlayerPlayingView: React.FunctionComponent<{ name: string, time: number }> = ({ name, time }) => (<Text style={styles.line}>{name+" "+time.toString()}</Text>)

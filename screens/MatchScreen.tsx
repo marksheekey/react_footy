@@ -1,12 +1,9 @@
 import {
+    Animated,
     AppState, AppStateStatus,
     AsyncStorage,
     Button,
-    FlatList,
-    SafeAreaView,
-    StyleSheet,
     Text,
-    TouchableOpacity,
     View
 } from "react-native";
 import * as React from "react";
@@ -21,18 +18,7 @@ import {MatchStatus, Player} from "../classes/Classes";
 import {differenceInSeconds} from "date-fns";
 
 const db = openDatabase('Players.db');
-const appState = useRef(AppState.currentState);
-const [elapsed, setElapsed] = useState(0);
-
-const recordStartTime = async () => {
-    try {
-        const now = new Date();
-        await AsyncStorage.setItem("@start_time", now.toISOString());
-    } catch (err) {
-        // TODO: handle errors from setItem properly
-        console.warn(err);
-    }
-};
+const timer = require('react-native-timer');
 
 export default class MatchScreen extends Component {
     state = {
@@ -41,23 +27,35 @@ export default class MatchScreen extends Component {
         players: [] as Player[],
         playerOff: "",
         playerOn: "",
-        clockRunning: false
+        clockRunning: false,
+        elapsedTime: 0
+    }
+
+    doTiming = () => {
+        console.log("timer")
+        if (this.state.clockRunning) {
+            const updatedTime = this.state.elapsedTime + 1
+            this.setState({
+                elapsedTime: updatedTime
+            })
+            this.state.players.filter(player => player.playing && player.inMatch).forEach((item ) => {
+                var upd = item
+                item.timePlayed = item.timePlayed +1
+                this.updatePlayer(item)
+            })
+        }
     }
 
     componentDidMount() {
         createTable()
         this.getPlayersFromDb()
-        AppState.addEventListener("change", this.handleAppStateChange);
+        timer.clearTimeout(this)
     }
 
     subPlayer = (player: Player) => {
         var playerOnState = this.state.playerOn
         var playerOffState = this.state.playerOff
-
-        console.log("sub player",player.name+" "+player.key)
-        console.log("state:"+this.state.playerOn, this.state.playerOff)
-
-        if(player.key == playerOnState || player.key == playerOffState){
+        if (player.key == playerOnState || player.key == playerOffState) {
             this.setState({
                 playerOff: "",
                 playerOn: ""
@@ -66,29 +64,26 @@ export default class MatchScreen extends Component {
             return
         }
 
-        if(player.playing){
-            console.log("sub player coming off",player.name)
+        if (player.playing) {
             playerOffState = player.key
             this.setState({
                 playerOff: player.key
             })
         }
 
-        if(!player.playing){
-            console.log("sub player coming on",player.name)
+        if (!player.playing) {
             playerOnState = player.key
             this.setState({
                 playerOn: player.key
             })
         }
 
-        if(playerOnState.length > 0 && playerOffState.length > 0){
-            console.log("substutution ready")
-            var playerOff  = this.state.players.find(list => list.key === playerOffState)
-            if(playerOff !== undefined){
+        if (playerOnState.length > 0 && playerOffState.length > 0) {
+            var playerOff = this.state.players.find(list => list.key === playerOffState)
+            if (playerOff !== undefined) {
                 playerOff.playing = false
                 var playerOn = this.state.players.find(list => list.key === playerOnState)
-                if(playerOn != undefined){
+                if (playerOn != undefined) {
                     playerOn.playing = true
                     this.updatePlayer(playerOff)
                     this.updatePlayer(playerOn)
@@ -99,7 +94,6 @@ export default class MatchScreen extends Component {
                 }
             }
         }
-
     }
 
     updatePlayer = (player: Player) => {
@@ -130,12 +124,14 @@ export default class MatchScreen extends Component {
             return (
                 <View style={styles.container}>
                     <Text style={styles.title}>Playing a match....</Text>
+                    <Text style={styles.title}>Time elapsed....{this.state.elapsedTime}</Text>
                     <PlayingGame
                         players={this.state.players} subPlayer={this.subPlayer}/>
                     <Button
                         title="Pause Game"
                         onPress={() => {
-                            this.setState({status: MatchStatus.Stopped})
+                            timer.clearInterval(this)
+                            this.setState({status: MatchStatus.Stopped, clockRunning: false})
                         }}
                     />
                 </View>
@@ -148,9 +144,10 @@ export default class MatchScreen extends Component {
                     <PreMatch
                         players={this.state.players} updatePlayer={this.updatePlayer}/>
                     <Button
-                        title="Team picked"
+                        title="Start Match"
                         onPress={() => {
-                            this.setState({status: MatchStatus.Playing})
+                            timer.setInterval(this,"match",this.doTiming, 1000)
+                            this.setState({status: MatchStatus.Playing, clockRunning: true})
                         }}
                     />
                 </View>
@@ -171,7 +168,6 @@ export default class MatchScreen extends Component {
                 </View>
             )
         }
-
     }
 
     getPlayersFromDb() {
@@ -181,7 +177,6 @@ export default class MatchScreen extends Component {
                 [],
                 (tx, results) => {
                     var squad = [] as Player[]
-                    console.log("results:", results.rows)
                     for (let i = 0; i < results.rows.length; ++i) {
                         const item = results.rows.item(i)
                         var player = new Player(item.name)
@@ -208,30 +203,4 @@ export default class MatchScreen extends Component {
             )
         });
     }
-
-    async handleAppStateChange(nextAppState: AppStateStatus) {
-        if (appState.current.match(/inactive|background/) &&
-            nextAppState === "active") {
-            let elapsed = await this.getElapsedTime();
-            if(elapsed != undefined){
-                console.log(elapsed)
-                setElapsed(elapsed);
-            }
-        }
-        appState.current = nextAppState;
-    }
-
-    getElapsedTime = async () => {
-        console.log("getTime")
-        try {
-            let startTime = await AsyncStorage.getItem("@start_time");
-            const now = new Date();
-            if(startTime != undefined){
-                return differenceInSeconds(now, Date.parse(startTime));
-            }
-        } catch (err) {
-            // TODO: handle errors from setItem properly
-            console.warn(err);
-        }
-    };
 }
