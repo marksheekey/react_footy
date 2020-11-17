@@ -1,6 +1,5 @@
 import {Button, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import * as React from "react";
-import {MatchProps, MatchStatus, Player} from "../classes/Classes";
 import {Component} from "react";
 import {StoppedGame} from "../components/StoppedGame";
 import {PlayingGame} from "../components/PlayingGame";
@@ -8,6 +7,7 @@ import styles from "../styles/styles";
 import {openDatabase} from "expo-sqlite";
 import {createTable} from "../components/SquadList";
 import {PreMatch} from "../components/PreMatch";
+import {MatchStatus, Player} from "../classes/Classes";
 
 const db = openDatabase('Players.db');
 
@@ -21,6 +21,22 @@ export default class MatchScreen extends Component {
     componentDidMount () {
         createTable()
         this.getPlayersFromDb()
+    }
+
+     updatePlayer = (player: Player) => {
+        var playing = 0
+        var inMatch = 0
+        if(player.playing) playing = 1
+        if(player.inMatch) inMatch = 1
+        db.transaction((tx) => {
+            tx.executeSql(
+                'UPDATE squad set in_match = ?, playing = ?, time_played = ? WHERE id = ?',
+                [inMatch, playing, player.timePlayed, player.key],
+                (tx, results) => {
+                    this.getPlayersFromDb()
+                }
+            );
+        });
     }
 
     render() {
@@ -63,7 +79,7 @@ export default class MatchScreen extends Component {
                         onPress={() => {this.setState({status : MatchStatus.PreMatch})}}
                     />
                     <StoppedGame
-                        players={this.state.players}/>
+                        players={this.state.players} updatePlayer={this.updatePlayer}/>
                 </View>
             )
         }
@@ -79,8 +95,12 @@ export default class MatchScreen extends Component {
                     var squad = [] as Player[]
                     console.log("results:", results.rows)
                     for (let i = 0; i < results.rows.length; ++i) {
-                        var player = new Player(results.rows.item(i).name)
-                        player.key = results.rows.item(i).id
+                        const item = results.rows.item(i)
+                        var player = new Player(item.name)
+                        player.key = item.id
+                        player.inMatch = item.in_match > 0
+                        player.playing = item.playing > 0
+                        player.timePlayed = item.time_played
                         squad.push(player)
                     }
                     this.setState({
