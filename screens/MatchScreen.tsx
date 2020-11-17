@@ -7,6 +7,7 @@ import {PlayingGame} from "../components/PlayingGame";
 import styles from "../styles/styles";
 import {openDatabase} from "expo-sqlite";
 import {createTable} from "../components/SquadList";
+import {PreMatch} from "../components/PreMatch";
 
 const db = openDatabase('Players.db');
 
@@ -35,9 +36,22 @@ export default class MatchScreen extends Component {
                 <View style={styles.container}>
                     <Button
                         title="Pause Game"
-                        onPress={() => {}}/>
+                        onPress={() => {this.setState({status : MatchStatus.Stopped})}}
+                        />
                 <PlayingGame
                     players={this.state.players}/>
+                </View>
+            )
+        }
+        if(this.state.status == MatchStatus.PreMatch){
+            return (
+                <View style={styles.container}>
+                    <Button
+                        title="Start Match"
+                        onPress={() => {this.setState({status : MatchStatus.Playing})}}
+                    />
+                    <PreMatch
+                        players={this.state.players}/>
                 </View>
             )
         }
@@ -45,9 +59,9 @@ export default class MatchScreen extends Component {
             return (
                 <View style={styles.container}>
                     <Button
-                        title="Start Game"
-                        onPress={() => {
-                        }}/>
+                        title="Match day squad picked"
+                        onPress={() => {this.setState({status : MatchStatus.PreMatch})}}
+                    />
                     <StoppedGame
                         players={this.state.players}/>
                 </View>

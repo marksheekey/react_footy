@@ -4,9 +4,9 @@ import styles from "../styles/styles";
 import {Player} from "../classes/Classes";
 import {PlayerView} from "./PlayerView";
 
-export const PlayingGame: React.FunctionComponent<{ players: Player[] }> = ({ players }) => (
+export const PreMatch: React.FunctionComponent<{ players: Player[] }> = ({ players }) => (
             <View style={styles.container}>
-                <Text style={styles.title}>On Pitch</Text>
+                <Text style={styles.title}>Starting on pitch</Text>
                 <FlatList data={players.filter(player => player.inMatch && player.playing)}
                           renderItem={({item}) => (
                               <PlayerView
