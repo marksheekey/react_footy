@@ -6,7 +6,7 @@ import {PlayerView} from "./PlayerView";
 
 export const StoppedGame: React.FunctionComponent<{ players: Player[] }> = ({ players }) => (
     <View style={styles.container}>
-        <Text style={styles.title}>Playing</Text>
+        <Text style={styles.title}>Playing in Match</Text>
         <FlatList data={players.filter(player => player.inMatch)}
                   renderItem={({item}) => (
                       <PlayerView
@@ -19,7 +19,7 @@ export const StoppedGame: React.FunctionComponent<{ players: Player[] }> = ({ pl
                 borderBottomWidth: 1,
             }}
         />
-        <Text style={styles.title}>Substitutes</Text>
+        <Text style={styles.title}>Not Playing</Text>
         <FlatList data={players.filter(player => !player.inMatch)}
                   renderItem={({item}) => (
                       // <TouchableOpacity onPress={() => this.updatePlayer(item.key, true)}>

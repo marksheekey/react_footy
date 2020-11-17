@@ -30,22 +30,22 @@ export default class MatchScreen extends Component {
                 </View>
             )
         }
-        if(this.state.status == MatchStatus.Stopped){
+        if(this.state.status == MatchStatus.Playing){
             return (
                 <View style={styles.container}>
                     <Button
-                        title="Start Game"
+                        title="Pause Game"
                         onPress={() => {}}/>
                 <PlayingGame
                     players={this.state.players}/>
                 </View>
             )
         }
-        if(this.state.status == MatchStatus.Playing) {
+        if(this.state.status == MatchStatus.Stopped) {
             return (
                 <View style={styles.container}>
                     <Button
-                        title="Pause Game"
+                        title="Start Game"
                         onPress={() => {
                         }}/>
                     <StoppedGame
