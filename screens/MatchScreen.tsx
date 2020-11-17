@@ -9,6 +9,7 @@ import {createTable} from "../components/SquadList";
 import {PreMatch} from "../components/PreMatch";
 import {MatchStatus, Player} from "../classes/Classes";
 
+
 const db = openDatabase('Players.db');
 const timer = require('react-native-timer');
 
