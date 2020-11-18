@@ -5,10 +5,14 @@ import {MaterialCommunityIcons} from "@expo/vector-icons";
 import * as Colors from '../constants/Colors'
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import SquadScreen from "./SquadScreen";
+import { Provider as PaperProvider , Appbar} from 'react-native-paper';
+import styles from "../styles/styles";
+import {View} from "react-native";
 const Tab = createBottomTabNavigator();
 
 const MainScreen = () => {
     return (
+        <View style={styles.innerContainer}>
         <NavigationContainer>
             <Tab.Navigator
                 initialRouteName="Match"
@@ -41,6 +45,7 @@ const MainScreen = () => {
                 />
             </Tab.Navigator>
         </NavigationContainer>
+        </View>
     )
 }
 

@@ -3,10 +3,13 @@ import {Text, View, FlatList, Button, TouchableWithoutFeedback, TouchableOpacity
 import styles from "../styles/styles";
 import {Player} from "../classes/Classes";
 import {PlayerView} from "./PlayerView";
+import {Appbar} from "react-native-paper";
 
 export const PreMatch: React.FunctionComponent<{ players: Player[], updatePlayer: ((player: Player) => void), buttonPress: (() => void)  }> = ({ players , updatePlayer, buttonPress} ) => {
     return (<View style={styles.innerContainer}>
-            <Text style={styles.title}>Select team to start....</Text>
+            <Appbar.Header >
+                <Appbar.Content title="Starting team..." />
+            </Appbar.Header>
             <Text style={styles.title}>Playing</Text>
             <FlatList data={players.filter(player => player.playing && player.inMatch)}
                       renderItem={({item}) => (

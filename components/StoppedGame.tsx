@@ -3,10 +3,13 @@ import {Button, FlatList, Text, TouchableOpacity, View} from "react-native";
 import styles from "../styles/styles";
 import {Player} from "../classes/Classes";
 import {PlayerView} from "./PlayerView";
+import {Appbar} from "react-native-paper";
 
 export const StoppedGame: React.FunctionComponent<{ players: Player[], updatePlayer: ((player: Player) => void), buttonPress: (() => void) }> = ({players, updatePlayer, buttonPress}) => {
     return (<View style={styles.innerContainer}>
-            <Text style={styles.title}>Select match day squad....</Text>
+            <Appbar.Header >
+                <Appbar.Content title="Matchday squad..." />
+            </Appbar.Header>
             <Text style={styles.title}>Playing in Match</Text>
             <FlatList data={players.filter(player => player.inMatch)}
                       renderItem={({item}) => (

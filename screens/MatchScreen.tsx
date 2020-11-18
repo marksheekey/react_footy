@@ -4,7 +4,7 @@ import {StoppedGame} from "../components/StoppedGame";
 import {PlayingGame} from "../components/PlayingGame";
 import {PreMatch} from "../components/PreMatch";
 import {MatchStatus, Player} from "../classes/Classes";
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {Database} from "../db/Database";
 import {LoadingPage} from "../components/LoadingPage";
 
@@ -34,9 +34,18 @@ const MatchScreen = () => {
         }
     }
 
+    const initialise = (players: Player[]) => {
+        elapsed = 0
+        setElapsedTime(0)
+        setLoading(false)
+        timer.clearInterval("match")
+        setStatus(MatchStatus.Stopped)
+        setPlayers(players)
+    }
+
     useFocusEffect(
         React.useCallback(() => {
-            db.createTable(setPlayers)
+            db.createTable(initialise)
         }, [])
     );
 
@@ -76,14 +85,6 @@ const MatchScreen = () => {
 
     const updatePlayer = (player: Player) => {
         db.updatePlayer(player,setPlayers)
-    }
-
-    const initialise = (players: Player[]) => {
-        elapsed = 0
-        setElapsedTime(0)
-        setLoading(false)
-        setPlayers(players)
-        timer.clearInterval("match")
     }
 
     const selectTeam = () => {
