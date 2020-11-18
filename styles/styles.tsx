@@ -10,6 +10,7 @@ export default StyleSheet.create({
         padding: 20
     },
     title: {
+        marginLeft: 10,
         marginBottom:10,
         fontWeight: 'bold',
         fontSize: 20
@@ -23,5 +24,9 @@ export default StyleSheet.create({
         marginBottom:2,
         padding:10,
         fontSize: 15
+    },
+    innerContainer:{
+        flex: 1,
+        flexDirection: "column"
     }
 })

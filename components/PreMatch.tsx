@@ -4,8 +4,9 @@ import styles from "../styles/styles";
 import {Player} from "../classes/Classes";
 import {PlayerView} from "./PlayerView";
 
-export const PreMatch: React.FunctionComponent<{ players: Player[], updatePlayer: ((player: Player) => void) }> = ({ players , updatePlayer} ) => {
-    return (<View style={styles.container}>
+export const PreMatch: React.FunctionComponent<{ players: Player[], updatePlayer: ((player: Player) => void), buttonPress: (() => void)  }> = ({ players , updatePlayer, buttonPress} ) => {
+    return (<View style={styles.innerContainer}>
+            <Text style={styles.title}>Select team to start....</Text>
             <Text style={styles.title}>Playing</Text>
             <FlatList data={players.filter(player => player.playing && player.inMatch)}
                       renderItem={({item}) => (
@@ -39,6 +40,10 @@ export const PreMatch: React.FunctionComponent<{ players: Player[], updatePlayer
                               />
                           </TouchableOpacity>
                       )}/>
+            <Button
+                title="Start Match"
+                onPress={() => { buttonPress()} }>
+            </Button>
         </View>
     )
 }
