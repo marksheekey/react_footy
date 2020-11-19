@@ -52,6 +52,7 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
                               />
                           </TouchableOpacity>
                       )}/>
+
             <Button
                 color = {heslerton}
                 title="Stop Game"
