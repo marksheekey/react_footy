@@ -1,17 +1,21 @@
-import React, {Component, useState} from "react";
-import {Text, View, FlatList, Button} from "react-native";
+import React, {useState} from "react";
+import {Text, View, Button} from "react-native";
 import styles from "../styles/styles";
 import Dialog from 'react-native-dialog';
 import {Player} from "../classes/Classes";
 import {openDatabase} from "expo-sqlite";
-import {PlayerView} from "./PlayerView";
+import {PlayerList} from "./PlayerList";
+import {Appbar} from "react-native-paper";
 const db = openDatabase('Players.db');
 
 export const SquadList: React.FunctionComponent<{ players: Player[], addPlayer: ((name:string) => void) }> = ({ players , addPlayer} ) => {
     const [dialogVisible, setDialogVisible] = useState(false)
     const [playerName, setPlayerName] = useState("")
         return (
-            <View style={styles.container}>
+            <View style={styles.innerContainer}>
+                <Appbar.Header >
+                    <Appbar.Content title="Squad..." />
+                </Appbar.Header>
                 <Text style={styles.title}>Squad list</Text>
                 <View>
                     <Dialog.Container visible={dialogVisible}>
@@ -28,11 +32,7 @@ export const SquadList: React.FunctionComponent<{ players: Player[], addPlayer: 
                         </Dialog.Description>
                     </Dialog.Container>
                 </View>
-                <FlatList data={players} renderItem={({item}) => (
-                    <PlayerView
-                        name={item.name}
-                    />
-                )}/>
+                <PlayerList players={players} />
                 <Button
                     title="Add Player"
                     onPress={() => {

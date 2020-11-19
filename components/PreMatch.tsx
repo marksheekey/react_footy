@@ -1,29 +1,23 @@
-import React, {Component} from "react";
-import {Text, View, FlatList, Button, TouchableWithoutFeedback, TouchableOpacity} from "react-native";
+import {Text, View, Button} from "react-native";
 import styles from "../styles/styles";
 import {Player} from "../classes/Classes";
-import {PlayerView} from "./PlayerView";
 import {Appbar} from "react-native-paper";
+import {PlayerList} from "./PlayerList";
 
 export const PreMatch: React.FunctionComponent<{ players: Player[], updatePlayer: ((player: Player) => void), buttonPress: (() => void)  }> = ({ players , updatePlayer, buttonPress} ) => {
+    const playing = players.filter(player => player.playing && player.inMatch)
+    const notPlaying = players.filter(player => !player.playing && player.inMatch)
+    const togglePlaying = (player: Player) =>{
+        player.playing = !player.playing
+        updatePlayer(player)
+    }
+
     return (<View style={styles.innerContainer}>
             <Appbar.Header >
                 <Appbar.Content title="Starting team..." />
             </Appbar.Header>
             <Text style={styles.title}>Playing</Text>
-            <FlatList data={players.filter(player => player.playing && player.inMatch)}
-                      renderItem={({item}) => (
-                          <TouchableOpacity onPress={() => {
-                              var newDetails = item
-                              item.playing = false
-                              updatePlayer(newDetails)
-                          }
-                          }>
-                              <PlayerView
-                                  name={item.name}
-                              />
-                          </TouchableOpacity>
-                      )}/>
+        <PlayerList players={playing} itemPress={togglePlaying}/>
             <View
                 style={{
                     borderBottomColor: 'black',
@@ -31,18 +25,7 @@ export const PreMatch: React.FunctionComponent<{ players: Player[], updatePlayer
                 }}
             />
             <Text style={styles.title}>Substitutes</Text>
-            <FlatList data={players.filter(player => !player.playing && player.inMatch)}
-                      renderItem={({item}) => (
-                          <TouchableOpacity onPress={() => {
-                              var newDetails = item
-                              item.playing = true
-                              updatePlayer(newDetails)}
-                          }>
-                              <PlayerView
-                                  name={item.name}
-                              />
-                          </TouchableOpacity>
-                      )}/>
+            <PlayerList players={notPlaying} itemPress={togglePlaying} />
             <Button
                 title="Start Match"
                 onPress={() => { buttonPress()} }>

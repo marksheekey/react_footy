@@ -12,14 +12,13 @@ const db = new Database()
 const timer = require('react-native-timer');
 
 const MatchScreen = () => {
-    const [loading, setLoading] = useState(true)
-    const [status, setStatus] = useState(MatchStatus.Stopped)
+    const [status, setStatus] = useState(MatchStatus.Loading)
     const [players, setPlayers] = useState([] as Player[])
     const [playerOff, setPlayerOff] = useState("")
     const [playerOn, setPlayerOn] = useState("")
     const [clockRunning, setClockRunning] = useState(false)
     const [elapsedTime, setElapsedTime] = useState(0)
-    var elapsed = 0
+    let elapsed = 0
 
    const doTiming = () => {
         if (clockRunning) {
@@ -37,7 +36,6 @@ const MatchScreen = () => {
     const initialise = (players: Player[]) => {
         elapsed = 0
         setElapsedTime(0)
-        setLoading(false)
         timer.clearInterval("match")
         setStatus(MatchStatus.Stopped)
         setPlayers(players)
@@ -50,8 +48,8 @@ const MatchScreen = () => {
     );
 
     const subPlayer = (player: Player) => {
-        var playerOnState = playerOn
-        var playerOffState = playerOff
+        let playerOnState = playerOn
+        let playerOffState = playerOff
         if (player.key == playerOnState || player.key == playerOffState) {
             setPlayerOff("")
             setPlayerOn("")
@@ -69,10 +67,10 @@ const MatchScreen = () => {
         }
 
         if (playerOnState.length > 0 && playerOffState.length > 0) {
-            var playerComingOff = players.find(list => list.key === playerOffState)
+            let playerComingOff = players.find(list => list.key === playerOffState)
             if (playerComingOff !== undefined) {
                 playerComingOff.playing = false
-                var playerComingOn = players.find(list => list.key === playerOnState)
+                let playerComingOn = players.find(list => list.key === playerOnState)
                 if (playerComingOn != undefined) {
                     playerComingOn.playing = true
                     setPlayerOn("")
@@ -107,9 +105,7 @@ const MatchScreen = () => {
         setClockRunning(false)
         db.resetSquad(setPlayers)
     }
-    if (loading) {
-        return (<LoadingPage />)
-    }
+
     if (status == MatchStatus.Playing) {
         return (<PlayingGame players={players} subPlayer={subPlayer} buttonPress={stopGame} elapsedTime={elapsedTime}/>)
     }

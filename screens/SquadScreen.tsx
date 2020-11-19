@@ -1,15 +1,12 @@
 import * as React from 'react';
 import SquadList from '../components/SquadList'
-
-import {SafeAreaView,} from 'react-native';
 import {Database} from "../db/Database";
 import {useState} from "react";
-import {MatchStatus, Player} from "../classes/Classes";
 import {useFocusEffect} from "@react-navigation/native";
+import {Player} from "../classes/Classes";
 const db = new Database()
 
 const SquadScreen = () => {
-    const [loading, setLoading] = useState(true)
     const [players, setPlayers] = useState([] as Player[])
 
     useFocusEffect(
@@ -24,10 +21,6 @@ const SquadScreen = () => {
         }
     }
 
-    return (
-        <SafeAreaView style={{flex: 1}}>
-            <SquadList players={players} addPlayer={addPlayer}/>
-        </SafeAreaView>
-    );
+    return (<SquadList players={players} addPlayer={addPlayer}/>);
 };
 export default SquadScreen;

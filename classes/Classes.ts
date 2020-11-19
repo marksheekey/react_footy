@@ -11,7 +11,7 @@ export class Player {
     }
 }
 
-export enum MatchStatus { Stopped, PreMatch, Playing, Paused}
+export enum MatchStatus { Loading, Stopped, PreMatch, Playing, Paused}
 export class MatchProps  {
     status: MatchStatus;
     players: Player[];

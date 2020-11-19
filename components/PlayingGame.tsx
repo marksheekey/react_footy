@@ -11,8 +11,9 @@ import {MatchStatus, Player} from "../classes/Classes";
 import {Appbar} from "react-native-paper";
 
 export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer: ((player: Player) => void), buttonPress: (() => void) , elapsedTime: number }> = ({ players , subPlayer, buttonPress, elapsedTime} ) => {
-    const playing = players.sort((a,b) => a.timePlayed - b.timePlayed)
-    const subs = players.sort((a,b) => b.timePlayed - a.timePlayed)
+    //const playing = players.sort((a,b) => a.timePlayed - b.timePlayed)
+    //const subs = players.sort((a,b) => b.timePlayed - a.timePlayed)
+    const playing = players.filter(player => player.playing && player.inMatch)
     return (
         <View style={styles.innerContainer}>
             <Appbar.Header >
@@ -20,6 +21,7 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
             </Appbar.Header>
             <Text style={styles.title}>Time elapsed....{elapsedTime}</Text>
             <Text style={styles.title}>Playing</Text>
+
             <FlatList data={playing.filter(player => player.playing && player.inMatch)}
                       renderItem={({item}) => (
                           <TouchableOpacity onPress={() => {subPlayer(item)}}>
