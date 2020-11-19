@@ -86,4 +86,11 @@ export class Database {
             );
         });
     }
+
+    addPlayer= (player: Player,callback: (players: Player[]) => void) => {
+        db.transaction(tx => {
+            tx.executeSql('INSERT INTO squad (id, name, in_match, playing, time_played) VALUES(?,?,0,0,0)', [player.key, player.name]),
+                [], this.getPlayers(callback)
+        });
+    }
 }
