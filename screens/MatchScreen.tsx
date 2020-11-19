@@ -47,14 +47,28 @@ const MatchScreen = () => {
         }, [])
     );
 
+    const setSelected = (id: string, selected: boolean) =>{
+        let index = players.findIndex(item => item.key === id)
+        players[index].selected = selected
+        setPlayers(players)
+    }
+
     const subPlayer = (player: Player) => {
         let playerOnState = playerOn
         let playerOffState = playerOff
+        if(playerOnState.length > 0){
+            setSelected(playerOnState,false)
+        }
+        if(playerOffState.length > 0){
+            setSelected(playerOffState,false)
+        }
         if (player.key == playerOnState || player.key == playerOffState) {
             setPlayerOff("")
             setPlayerOn("")
             return
         }
+
+        setSelected(player.key,true)
 
         if (player.playing) {
             playerOffState = player.key
@@ -70,9 +84,11 @@ const MatchScreen = () => {
             let playerComingOff = players.find(list => list.key === playerOffState)
             if (playerComingOff !== undefined) {
                 playerComingOff.playing = false
+                playerComingOff.selected = false
                 let playerComingOn = players.find(list => list.key === playerOnState)
                 if (playerComingOn != undefined) {
                     playerComingOn.playing = true
+                    playerComingOn.selected = false
                     setPlayerOn("")
                     setPlayerOff("")
                     db.updatePlayers([playerComingOn, playerComingOff], setPlayers)

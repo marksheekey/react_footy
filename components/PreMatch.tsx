@@ -3,6 +3,7 @@ import styles from "../styles/styles";
 import {Player} from "../classes/Classes";
 import {Appbar} from "react-native-paper";
 import {PlayerList} from "./PlayerList";
+import React from "react";
 
 export const PreMatch: React.FunctionComponent<{ players: Player[], updatePlayer: ((player: Player) => void), buttonPress: (() => void)  }> = ({ players , updatePlayer, buttonPress} ) => {
     const playing = players.filter(player => player.playing && player.inMatch)

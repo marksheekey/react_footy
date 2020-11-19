@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import { StyleSheet } from 'react-native';
-import {white} from "../constants/Colors";
+import {heslerton, white} from "../constants/Colors";
 
 
 export default StyleSheet.create({
@@ -16,11 +16,23 @@ export default StyleSheet.create({
         fontSize: 20
     },
     line: {
+        color: heslerton,
         flexDirection:"row",
         alignSelf:"stretch",
         marginLeft: 10,
         marginRight: 10,
         backgroundColor: white,
+        marginBottom:2,
+        padding:10,
+        fontSize: 15
+    },
+    selectedLine: {
+        color: white,
+        flexDirection:"row",
+        alignSelf:"stretch",
+        marginLeft: 10,
+        marginRight: 10,
+        backgroundColor: heslerton,
         marginBottom:2,
         padding:10,
         fontSize: 15

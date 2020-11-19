@@ -5,6 +5,7 @@ export class Player {
     inMatch: boolean = false;
     playing: boolean = false;
     timePlayed: number = 0;
+    selected : boolean = false;
     constructor(name: string) {
         this.key = Date.now().toString()
         this.name = name;
@@ -12,12 +13,5 @@ export class Player {
 }
 
 export enum MatchStatus { Loading, Stopped, PreMatch, Playing, Paused}
-export class MatchProps  {
-    status: MatchStatus;
-    players: Player[];
-    constructor(status: MatchStatus, players: Player[]) {
-        this.status = status
-        this.players = players;
-    }
-}
+
 

@@ -25,6 +25,7 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
                       renderItem={({item}) => (
                           <TouchableOpacity onPress={() => {subPlayer(item)}}>
                               <PlayerPlayingView
+                                  selected = {item.selected}
                                   time = {item.timePlayed}
                                   name={item.name}
                               />
@@ -41,6 +42,7 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
                       renderItem={({item}) => (
                           <TouchableOpacity onPress={() => {subPlayer(item)}}>
                               <PlayerPlayingView
+                                  selected = {item.selected}
                                   time = {item.timePlayed}
                                   name={item.name}
                               />
@@ -54,4 +56,11 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
     )
 }
 
-const PlayerPlayingView: React.FunctionComponent<{ name: string, time: number }> = ({ name, time }) => (<Text style={styles.line}>{name+" "+time.toString()}</Text>)
+const PlayerPlayingView: React.FunctionComponent<{ name: string, time: number, selected: boolean }> = ({ name, time, selected }) =>
+{
+    let style = styles.line
+    if(selected) {
+        style = styles.selectedLine
+    }
+    return (<Text style={style}>{name+" "+time.toString()}</Text>)
+}
