@@ -19,7 +19,7 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
             <Appbar.Header >
                 <Appbar.Content title="Match" />
             </Appbar.Header>
-            <Text style={styles.title}>Time elapsed....{elapsedTime}</Text>
+            <Text style={styles.title}>Time elapsed....{secondsToHms(elapsedTime)}</Text>
             <Text style={styles.title}>Playing</Text>
             <FlatList data={playing}
                       renderItem={({item}) => (
@@ -62,5 +62,29 @@ const PlayerPlayingView: React.FunctionComponent<{ name: string, time: number, s
     if(selected) {
         style = styles.selectedLine
     }
-    return (<Text style={style}>{name+" "+time.toString()}</Text>)
+    return (
+        <View style = {style}>
+                <Text style={{flex:5}}>{name}</Text>
+                <Text style={{textAlign: 'right', flex:1}}>{secondsToHms(time)}</Text>
+
+        </View>
+    )
+}
+
+function secondsToHms(seconds: number) {
+    var h = Math.floor(seconds / 3600);
+    var m = Math.floor(seconds % 3600 / 60);
+    var s = Math.floor(seconds % 3600 % 60);
+    let minutes = "00"
+    if(m>0 && m<10){
+        minutes = "0"+m
+    }
+    if(m>10){
+        minutes = ""+m
+    }
+    let secs = s+""
+    if(s<10){
+        secs = "0"+s
+    }
+    return minutes+":"+secs
 }
