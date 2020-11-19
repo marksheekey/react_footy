@@ -10,13 +10,14 @@ import styles from "../styles/styles";
 import {MatchStatus, Player} from "../classes/Classes";
 import {Appbar} from "react-native-paper";
 import {PlayerList} from "./PlayerList";
+import {heslerton} from "../constants/Colors";
 
 export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer: ((player: Player) => void), buttonPress: (() => void) , elapsedTime: number }> = ({ players , subPlayer, buttonPress, elapsedTime} ) => {
     const playing = players.filter(player => player.playing && player.inMatch)
     const subs = players.filter(player => !player.playing && player.inMatch)
     return (
         <View style={styles.innerContainer}>
-            <Appbar.Header >
+            <Appbar.Header style={{ backgroundColor: heslerton }}>
                 <Appbar.Content title="Match" />
             </Appbar.Header>
             <View style = {styles.titleLine}>
@@ -52,6 +53,7 @@ export const PlayingGame: React.FunctionComponent<{ players: Player[], subPlayer
                           </TouchableOpacity>
                       )}/>
             <Button
+                color = {heslerton}
                 title="Stop Game"
                 onPress={() => { buttonPress()} }>
             </Button>
