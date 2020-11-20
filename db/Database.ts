@@ -55,7 +55,7 @@ export class Database {
         });
     }
 
-    updatePlayers =  (players: Player[], callback: (players: Player[]) => void) => {
+    updatePlayers =  (players: Player[], callback?: (players: Player[]) => void) => {
         players.forEach(player => {
             if(players.length == 2) {
                 console.log("update players " + player.name + " " + player.playing)
@@ -71,7 +71,9 @@ export class Database {
                 );
             });
         })
-        this.getPlayers(callback)
+        if(callback !== undefined){
+            this.getPlayers(callback)
+        }
     }
 
 

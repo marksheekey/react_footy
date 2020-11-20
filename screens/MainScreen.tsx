@@ -7,7 +7,8 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import SquadScreen from "./SquadScreen";
 import { Provider as PaperProvider , Appbar} from 'react-native-paper';
 import styles from "../styles/styles";
-import {View} from "react-native";
+import {AppState, View} from "react-native";
+import {useEffect, useRef, useState} from "react";
 const Tab = createBottomTabNavigator();
 
 const MainScreen = () => {

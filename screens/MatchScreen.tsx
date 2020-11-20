@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {StoppedGame} from "../components/StoppedGame";
 import {PlayingGame} from "../components/PlayingGame";
 import {PreMatch} from "../components/PreMatch";
@@ -7,6 +7,8 @@ import {MatchStatus, Player} from "../classes/Classes";
 import {useFocusEffect} from '@react-navigation/native';
 import {Database} from "../db/Database";
 import {LoadingPage} from "../components/LoadingPage";
+import {AppState} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const db = new Database()
 const timer = require('react-native-timer');
@@ -18,6 +20,27 @@ const MatchScreen = () => {
     const [playerOn, setPlayerOn] = useState("")
     const [clockRunning, setClockRunning] = useState(false)
     const [elapsedTime, setElapsedTime] = useState(0)
+    const appState = useRef(AppState.currentState);
+    const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+    useEffect(() => {
+        AppState.addEventListener("change", _handleAppStateChange);
+        return () => {
+            AppState.removeEventListener("change", _handleAppStateChange);
+        };
+    }, []);
+
+    // @ts-ignore
+    const _handleAppStateChange = (nextAppState) => {
+        appState.current
+        appState.current = nextAppState;
+        setAppStateVisible(appState.current);
+        if(appState.current.match(/inactive|background/)){
+            saveMatch()
+        }else{
+            fetchMatch()
+        }
+    };
     let elapsed = 0
 
    const doTiming = () => {
@@ -102,25 +125,74 @@ const MatchScreen = () => {
     }
 
     const selectTeam = () => {
-        console.log("select team")
         setStatus(MatchStatus.PreMatch)
         setClockRunning(true)
     }
 
     const startMatch = () => {
-        console.log("press start match")
         setStatus(MatchStatus.Playing)
         setClockRunning(true)
         timer.setInterval("match", doTiming, 1000)
     }
 
     const stopGame = () => {
-        console.log("press stop game")
         timer.clearInterval("match")
         setStatus(MatchStatus.Stopped)
         setClockRunning(false)
         db.resetSquad(setPlayers)
     }
+
+    const saveMatch = async () => {
+        await storeData().then( () => {
+                timer.clearInterval("match")
+                setStatus(MatchStatus.Stopped)
+                setClockRunning(false)
+            }
+        )
+    }
+
+    const storeData = async () => {
+        try {
+            const storeStatus = MatchStatus[status]
+            console.log("store status xx",status.toString())
+            await AsyncStorage.setItem('@match_status', storeStatus)
+            await AsyncStorage.setItem('@backgrounded_time', Date.now().toString())
+            await AsyncStorage.setItem('@elapsed_time', elapsedTime.toString())
+            if(status === MatchStatus.Playing){
+                db.updatePlayers(players)
+            }
+        } catch (e) {
+            // saving error
+        }
+    }
+
+    const fetchMatch = async () => {
+        try {
+            const storedStatus = await AsyncStorage.getItem('@match_status')
+            const storedTime = await AsyncStorage.getItem('@backgrounded_time')
+            const storedElapsed = await AsyncStorage.getItem('@elapsed_time')
+            if(status !== null) {
+                const newStatus = MatchStatus[storedStatus as unknown as keyof typeof MatchStatus]
+                setStatus(newStatus)
+                if(newStatus == MatchStatus.Playing && storedTime !== null && storedElapsed !== null){
+                    const difference = (Date.now() - parseInt(storedTime)) / 1000
+                    elapsed = parseInt(storedElapsed) + difference
+                    timer.setInterval("match", doTiming, 1000)
+                }
+            }
+            if(storedTime !== null) {
+                console.log("time:"+storedTime)
+            }
+            if(storedElapsed !== null) {
+                console.log("elapsed:"+storedElapsed)
+                setElapsedTime(parseInt(storedElapsed))
+            }
+        } catch(e) {
+            setStatus(MatchStatus.Stopped)
+        }
+    }
+
+    console.log("status current",status.toString())
 
     if (status == MatchStatus.Playing) {
         return (<PlayingGame players={players} subPlayer={subPlayer} buttonPress={stopGame} elapsedTime={elapsedTime}/>)
