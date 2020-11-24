@@ -1,13 +1,13 @@
-import React, {useState} from "react";
-import {Text, View, Button} from "react-native";
-import styles from "../styles/styles";
-import Dialog from 'react-native-dialog';
-import {Player} from "../classes/Classes";
-import {openDatabase} from "expo-sqlite";
-import {PlayerList} from "./PlayerList";
-import {Appbar} from "react-native-paper";
-import {heslerton} from "../constants/Colors";
-const db = openDatabase('Players.db');
+import React, {useState} from "react"
+import {Text, View, Button} from "react-native"
+import styles from "../styles/styles"
+import Dialog from 'react-native-dialog'
+import {Player} from "../classes/Classes"
+import {openDatabase} from "expo-sqlite"
+import {PlayerList} from "./PlayerList"
+import {Appbar} from "react-native-paper"
+import {heslerton} from "../constants/Colors"
+const db = openDatabase('Players.db')
 
 export const SquadList: React.FunctionComponent<{ players: Player[], addPlayer: ((name:string) => void) }> = ({ players , addPlayer} ) => {
     const [dialogVisible, setDialogVisible] = useState(false)

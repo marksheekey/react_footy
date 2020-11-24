@@ -21,6 +21,6 @@ const SquadScreen = () => {
         }
     }
 
-    return (<SquadList players={players} addPlayer={addPlayer}/>);
+    return (<SquadList players={players} addPlayer={addPlayer}/>)
 };
 export default SquadScreen;

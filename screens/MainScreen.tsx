@@ -9,7 +9,7 @@ import { Provider as PaperProvider , Appbar} from 'react-native-paper';
 import styles from "../styles/styles";
 import {AppState, View} from "react-native";
 import {useEffect, useRef, useState} from "react";
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator()
 
 const MainScreen = () => {
     return (

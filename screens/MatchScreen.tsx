@@ -24,9 +24,9 @@ const MatchScreen = () => {
     const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
     useEffect(() => {
-        AppState.addEventListener("change", _handleAppStateChange);
+        AppState.addEventListener("change", _handleAppStateChange)
         return () => {
-            AppState.removeEventListener("change", _handleAppStateChange);
+            AppState.removeEventListener("change", _handleAppStateChange)
         };
     }, []);
 
@@ -34,7 +34,7 @@ const MatchScreen = () => {
     const _handleAppStateChange = (nextAppState) => {
         appState.current
         appState.current = nextAppState;
-        setAppStateVisible(appState.current);
+        setAppStateVisible(appState.current)
         if(appState.current.match(/inactive|background/)){
             saveMatch()
         }else{
@@ -207,4 +207,4 @@ const MatchScreen = () => {
     return (<LoadingPage />)
 }
 
-export default MatchScreen;
+export default MatchScreen
