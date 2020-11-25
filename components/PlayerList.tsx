@@ -11,7 +11,7 @@ export const PlayerList: React.FunctionComponent<{ players: Player[], itemPress?
                 itemPress(item)
             }
         }}>
-            <PlayerView
+            <PlayerViewMemo
                 name={item.name}
             />
         </TouchableOpacity>

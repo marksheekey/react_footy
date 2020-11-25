@@ -7,7 +7,7 @@ const PlayerView: React.FunctionComponent<{ name: string }> = ({ name }) => {
     return (<Text style={styles.line}>{name}</Text>)
 }
 export default PlayerView
-//export const PlayerViewMemo = React.memo(PlayerView)
-export const PlayerViewMemo = React.memo(PlayerView,((prevProps, nextProps) => {
-return true
-} ))
+export const PlayerViewMemo = React.memo(PlayerView)
+//export const PlayerViewMemo = React.memo(PlayerView,((prevProps, nextProps) => {
+//return true
+//} ))
