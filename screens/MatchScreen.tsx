@@ -154,7 +154,6 @@ const MatchScreen = () => {
     const storeData = async () => {
         try {
             const storeStatus = MatchStatus[status]
-            console.log("store status xx",status.toString())
             await AsyncStorage.setItem('@match_status', storeStatus)
             await AsyncStorage.setItem('@backgrounded_time', Date.now().toString())
             await AsyncStorage.setItem('@elapsed_time', elapsedTime.toString())
@@ -191,8 +190,6 @@ const MatchScreen = () => {
             setStatus(MatchStatus.Stopped)
         }
     }
-
-    console.log("status current",status.toString())
 
     if (status == MatchStatus.Playing) {
         return (<PlayingGame players={players} subPlayer={subPlayer} buttonPress={stopGame} elapsedTime={elapsedTime}/>)
