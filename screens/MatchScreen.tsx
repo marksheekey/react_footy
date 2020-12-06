@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const db = new Database()
 const timer = require('react-native-timer');
+var elapsed = 0
 
 const MatchScreen = () => {
     const [status, setStatus] = useState(MatchStatus.Loading)
@@ -22,7 +23,7 @@ const MatchScreen = () => {
     const [elapsedTime, setElapsedTime] = useState(0)
     const appState = useRef(AppState.currentState);
     const [appStateVisible, setAppStateVisible] = useState(appState.current);
-
+    var on: Boolean = false
     useEffect(() => {
         AppState.addEventListener("change", _handleAppStateChange)
         return () => {
@@ -41,10 +42,11 @@ const MatchScreen = () => {
             fetchMatch()
         }
     };
-    let elapsed = 0
 
    const doTiming = () => {
-        if (clockRunning) {
+        console.log("clockrunning",clockRunning)
+        if (on) {
+            setClockRunning(true)
             elapsed ++
             setElapsedTime(elapsed)
             for (let i = 0; i < players.length; i++) {
@@ -53,6 +55,9 @@ const MatchScreen = () => {
                 }
             }
             setPlayers(players)
+        }else{
+            timer.clearInterval("match")
+            setClockRunning(false)
         }
     }
 
@@ -126,27 +131,36 @@ const MatchScreen = () => {
 
     const selectTeam = () => {
         setStatus(MatchStatus.PreMatch)
-        setClockRunning(true)
     }
 
     const startMatch = () => {
+        elapsed = 0
+        setElapsedTime(0)
         setStatus(MatchStatus.Playing)
-        setClockRunning(true)
         timer.setInterval("match", doTiming, 1000)
     }
 
     const stopGame = () => {
         timer.clearInterval("match")
         setStatus(MatchStatus.Stopped)
-        setClockRunning(false)
         db.resetSquad(setPlayers)
+    }
+
+    const pauseStart = () => {
+        console.log("pauseStart",clockRunning)
+        if(clockRunning){
+            on = false
+            doTiming()
+        }else{
+            on = true
+            timer.setInterval("match", doTiming, 1000)
+        }
     }
 
     const saveMatch = async () => {
         await storeData().then( () => {
                 timer.clearInterval("match")
                 setStatus(MatchStatus.Stopped)
-                setClockRunning(false)
             }
         )
     }
@@ -192,7 +206,7 @@ const MatchScreen = () => {
     }
 
     if (status == MatchStatus.Playing) {
-        return (<PlayingGame players={players} subPlayer={subPlayer} buttonPress={stopGame} elapsedTime={elapsedTime}/>)
+        return (<PlayingGame players={players} ticking={clockRunning} subPlayer={subPlayer} buttonPress={stopGame} tickPress={pauseStart} elapsedTime={elapsedTime}/>)
     }
     if (status == MatchStatus.PreMatch) {
         return (<PreMatch players={players} updatePlayer={updatePlayer} buttonPress={startMatch}/>)
